@@ -12,7 +12,8 @@
 
 <select id="dynamic_select" onchange="change_url(this.value);">
 	<option value="" selected>--Choose Keyword--</option>
-	<option value="{{ url_for('displayMap', keywords = 'weather')}}">#Weather</option>
+	<!-- <option value="{{ url_for('displayMap', keywords = 'weather')}}">#Weather</option> -->
+	<option value="{{ url_for('displayMap')}}">#Weather</option>
 </select>
 
 {% endblock %}

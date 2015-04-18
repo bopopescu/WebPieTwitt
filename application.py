@@ -14,6 +14,7 @@ from boto.sqs.message import Message
 application = Flask(__name__)
 
 def readFromSQS(q):
+	rs = q.get_messages()
 	m = Message()
 	m.message_attributes = {
 		"geoLat": {
@@ -39,6 +40,9 @@ def readFromSQS(q):
 	return geoLat, geoLong, sentimentStat, text
 
 
+# global variable
+allTweets = []
+
 # / is the home page of PieTwitt
 @application.route('/')
 def index():
@@ -48,15 +52,15 @@ def index():
 
 # /map displays heatmap of all tweets
 @application.route('/map')
-def displayMap(keywords):
-	allTweets = []
-	return flask.render_template('map.html', keywords=keywords, allTweets = allTweets)
+def displayMap():
+	global allTweets
+	return flask.render_template('map.html', allTweets = allTweets)
 
-# /map displays heatmap of all tweets
-@application.route('/map/<keywords>')
-def displayMap(keywords):
-	allTweets = []
-	return flask.render_template('map.html', keywords=keywords, allTweets = allTweets)
+# # /map displays heatmap of all tweets
+# @application.route('/map/<keywords>')
+# def displayMap(keywords):
+# 	allTweets = []
+# 	return flask.render_template('map.html', keywords=keywords, allTweets = allTweets)
 
 
 # SNS HTTP request endpoint: subscribe, unsubscribe, notification
