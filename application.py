@@ -6,8 +6,38 @@ import json
 # open stream for confirmation
 import urllib
 
+# boto SQS 
+import boto.sqs
+from boto.sqs.message import Message
+
 
 application = Flask(__name__)
+
+def readFromSQS(q):
+	m = Message()
+	m.message_attributes = {
+		"geoLat": {
+			"data_type": "String",
+			"string_value": geoLat
+		},
+		"geoLong": {
+			"data_type": "String",
+			"string_value": geoLong
+		},
+		"sentimentStat": {
+			"data_type": "String",
+			"string_value": sentimentStat
+		},
+		"text": {
+			"data_type": "String",
+			"string_value": text
+		}
+	}
+	m.set_body("Sugar rush.")
+	q.write(m)
+
+	return geoLat, geoLong, sentimentStat, text
+
 
 # / is the home page of PieTwitt
 @application.route('/')
@@ -17,11 +47,15 @@ def index():
 
 
 # /map displays heatmap of all tweets
+@application.route('/map')
+def displayMap(keywords):
+	allTweets = []
+	return flask.render_template('map.html', keywords=keywords, allTweets = allTweets)
+
+# /map displays heatmap of all tweets
 @application.route('/map/<keywords>')
 def displayMap(keywords):
 	allTweets = []
-
-
 	return flask.render_template('map.html', keywords=keywords, allTweets = allTweets)
 
 
@@ -52,6 +86,9 @@ def sns():
 
         	if message:
         		# initiate worker pool right here
+        		conn = boto.sqs.connect_to_region("us-east-1")
+				q = conn.get_queue('kitkat_SQS')
+				geoLat, geoLong, sentimentStat, text = readFromSQS(q)
 
         	return '', 200
 	else:
