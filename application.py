@@ -62,6 +62,7 @@ def sns():
 
         	conn = boto.sqs.connect_to_region("us-east-1")
         	q = conn.get_queue('kitkat_SQS')
+        	print "made connection"
 
     		global resultsFromSQS
         	for i in range(3):
