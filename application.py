@@ -7,8 +7,8 @@ import json
 import urllib
 
 # boto SQS 
-# import boto.sqs
-# from boto.sqs.message import Message
+import boto.sqs
+from boto.sqs.message import Message
 
 
 application = Flask(__name__)
@@ -54,8 +54,15 @@ def sns():
         	message = obj[u'Message']
         	print message
 
-        	# reads from SQS and returns results to map.html
-        	# for i in range(3):
+        	resultsFromSQS = []
+
+        	# read sentiment result from SQS
+			conn = boto.sqs.connect_to_region("us-east-1")
+			q = conn.get_queue('kitkat_SQS')
+
+        	for i in range(3):
+
+
 
 
         	return '', 200
